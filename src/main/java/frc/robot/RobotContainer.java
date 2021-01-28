@@ -228,7 +228,7 @@ public class RobotContainer {
 	      new PIDController(1, 0, 0),
 	      new PIDController(1, 0, 0),
 	      // RamseteCommand passes volts to the callback
-	      drivetrain::tankDriveVolts,
+	      drivetrain::tankDrive,
 	      drivetrain);
   
       // Reset odometry to the starting pose of the trajectory.

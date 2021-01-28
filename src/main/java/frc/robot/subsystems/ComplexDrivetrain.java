@@ -274,6 +274,14 @@ public class ComplexDrivetrain extends SubsystemBase {
 		m_gyro.getYawPitchRoll(heading);
 		return Rotation2d.fromDegrees(heading[0]);
 	}
+	/**
+	 * Returns the current wheel speeds of the robot.
+	 *
+	 * @return The current wheel speeds.
+	 */
+	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+		return new DifferentialDriveWheelSpeeds(m_leftEncoder.getVelocity(), m_rightEncoder.getVelocity());
+	}
 
 	/**
 	 * Updates the odometry object with the latest sensor data.
@@ -299,10 +307,18 @@ public class ComplexDrivetrain extends SubsystemBase {
 	public double getRightDistance() {
 		return (m_rightEncoder.getPosition() * (Math.PI * 6)) / 12;
 	}
+	/**
+	 * Returns the currently-estimated pose of the robot.
+	 *
+	 * @return The pose.
+	 */
+	public Pose2d getPose() {
+		return m_odometry.getPoseMeters();
+	}
 
 	public void resetOdometry(Pose2d pose) {
 		reset();
-		m_odometry.resetPosition(pose, m_gyro.);
+		m_odometry.resetPosition(pose, getAngle());
 	      }
 
 	/**
