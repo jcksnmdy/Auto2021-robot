@@ -187,10 +187,10 @@ public class RobotContainer {
 	  new DifferentialDriveVoltageConstraint(
 	      new SimpleMotorFeedforward(
 		  0.22,
-		  1.98,
-		  0.2),
+		  0.001,
+		  0.01),
 		  Constants.Drivetrain.mkinematics,
-	      10);
+	      8);
   
       // Create config for trajectory
       TrajectoryConfig config =
@@ -221,12 +221,12 @@ public class RobotContainer {
 	      new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
 	      new SimpleMotorFeedforward(
 		  0.22,
-		  1.98,
-		  0.2),
+		  0.001,
+		  0.01),
 		Constants.Drivetrain.mkinematics,
 	      drivetrain::getWheelSpeeds,
-	      new PIDController(1, 0, 0),
-	      new PIDController(1, 0, 0),
+	      new PIDController(0.5, 0.002, 0.01),
+	      new PIDController(0.5, 0.002, 0.01),
 	      // RamseteCommand passes volts to the callback
 	      drivetrain::tankDrive,
 	      drivetrain);

@@ -109,14 +109,23 @@ public class ComplexDrivetrain extends SubsystemBase {
 	}
 
 	/**
+	 * Returns the heading of the robot.
+	 *
+	 * @return the robot's heading in degrees, from -180 to 180
+	 */
+	public double getHeading() {
+		return m_gyro.getAbsoluteCompassHeading();
+	}
+
+	/**
 	 * Basic drivetrain operation, with no feed-forward control.
 	 * 
 	 * @param lSpeed Left Speed of Drivetrain
 	 * @param rSpeed Right Speed of Drivetrain
 	 */
 	public void tankDrive(double lSpeed, double rSpeed) {
-		lSpeed = Constants.Drivetrain.kTankInputFactor * lSpeed;
-		rSpeed = Constants.Drivetrain.kTankInputFactor * rSpeed;
+		lSpeed = (Constants.Drivetrain.kTankInputFactor * lSpeed)/12;
+		rSpeed = (Constants.Drivetrain.kTankInputFactor * rSpeed)/12;
 		m_leftFront.set(lSpeed);
 		m_rightFront.set(rSpeed);
 		double speed = 0;
