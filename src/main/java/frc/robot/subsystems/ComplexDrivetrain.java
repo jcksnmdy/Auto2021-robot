@@ -124,8 +124,8 @@ public class ComplexDrivetrain extends SubsystemBase {
 	 * @param rSpeed Right Speed of Drivetrain
 	 */
 	public void tankDrive(double lSpeed, double rSpeed) {
-		lSpeed = (Constants.Drivetrain.kTankInputFactor * lSpeed)/12;
-		rSpeed = (Constants.Drivetrain.kTankInputFactor * rSpeed)/12;
+		lSpeed = (Constants.Drivetrain.kTankInputFactor * lSpeed)/13;
+		rSpeed = (Constants.Drivetrain.kTankInputFactor * rSpeed)/13;
 		m_leftFront.set(lSpeed);
 		m_rightFront.set(rSpeed);
 		double speed = 0;
