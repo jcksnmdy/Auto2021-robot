@@ -182,61 +182,77 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-	  // Create a voltage constraint to ensure we don't accelerate too fast
-	  var autoVoltageConstraint =
-	  new DifferentialDriveVoltageConstraint(
-	      new SimpleMotorFeedforward(
-		  0.22,
-		  0.001,
-		  0.01),
-		  Constants.Drivetrain.mkinematics,
-	      8);
+// 	  // Create a voltage constraint to ensure we don't accelerate too fast
+// 	  var autoVoltageConstraint =
+// 	  new DifferentialDriveVoltageConstraint(
+// 	      new SimpleMotorFeedforward(
+// 		  0.22,
+// 		  0.001,
+// 		  0.01),
+// 		  Constants.Drivetrain.mkinematics,
+// 	      1);
   
-      // Create config for trajectory
-      TrajectoryConfig config =
-	  new TrajectoryConfig(
-		  AutoConstants.kMaxSpeedMetersPerSecond,
-		  AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-	      // Add kinematics to ensure max speed is actually obeyed
-	      .setKinematics(Constants.Drivetrain.mkinematics)
-	      // Apply the voltage constraint
-	      .addConstraint(autoVoltageConstraint);
+//       // Create config for trajectory
+//       TrajectoryConfig config =
+// 	  new TrajectoryConfig(
+// 		  AutoConstants.kMaxSpeedMetersPerSecond,
+// 		  AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+// 	      // Add kinematics to ensure max speed is actually obeyed
+// 	      .setKinematics(Constants.Drivetrain.mkinematics)
+// 	      // Apply the voltage constraint
+// 	      .addConstraint(autoVoltageConstraint);
   
-      // An example trajectory to follow.  All units in meters.
-      Trajectory exampleTrajectory =
-	  TrajectoryGenerator.generateTrajectory(
-	      // Start at the origin facing the +X direction
-	      new Pose2d(0, 0, new Rotation2d(0)),
-	      // Pass through these two interior waypoints, making an 's' curve path
-	      List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-	      // End 3 meters straight ahead of where we started, facing forward
-	      new Pose2d(3, 0, new Rotation2d(0)),
-	      // Pass config
-	      config);
+//       // An example trajectory to follow.  All units in meters.
+//       Trajectory exampleTrajectory =
+// 	  TrajectoryGenerator.generateTrajectory(
+// 	      // Start at the origin facing the +X direction
+// 	      new Pose2d(0, 0, new Rotation2d(270)),
+// 	      // Pass through these two interior waypoints, making an 's' curve path
+// 	      List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+// 	      // End 3 meters straight ahead of where we started, facing forward
+// 	      new Pose2d(3, 0, new Rotation2d(270)),
+// 	      // Pass config
+// 	      config);
   
-      RamseteCommand ramseteCommand =
-	  new RamseteCommand(
-	      exampleTrajectory,
-	      drivetrain::getPose,
-	      new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
-	      new SimpleMotorFeedforward(
-		  0.22,
-		  0.001,
-		  0.01),
-		Constants.Drivetrain.mkinematics,
-	      drivetrain::getWheelSpeeds,
-	      new PIDController(0.5, 0.002, 0.01),
-	      new PIDController(0.5, 0.002, 0.01),
-	      // RamseteCommand passes volts to the callback
-	      drivetrain::tankDrive,
-	      drivetrain);
+//       RamseteCommand ramseteCommand =
+// 	  new RamseteCommand(
+// 	      exampleTrajectory,
+// 	      drivetrain::getPose,
+// 	      new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+// 	      new SimpleMotorFeedforward(
+// 		  0.22,
+// 		  0.001,
+// 		  0.01),
+// 		Constants.Drivetrain.mkinematics,
+// 	      drivetrain::getWheelSpeeds,
+// 	      new PIDController(
+// 		      Constants.Drivetrain.kPIDConfig.P,
+// 		      0,
+// 		      0),
+// 	      new PIDController(
+// 		      Constants.Drivetrain.kPIDConfig.P,
+// 		      0,
+// 		      0),
+// 	      // RamseteCommand passes volts to the callback
+// 	      drivetrain::tankDrive,
+// 	      drivetrain);
   
-      // Reset odometry to the starting pose of the trajectory.
-      drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
+//       // Reset odometry to the starting pose of the trajectory.
+//       drivetrain.resetOdometry(exampleTrajectory.getInitialPose());
   
-      // Run path following command, then stop at the end.
-      return ramseteCommand.andThen(() -> drivetrain.curvatureDrive(0.0, 0.0));
+//       // Run path following command, then stop at the end.
+//       return ramseteCommand.andThen(() -> drivetrain.curvatureDrive(0.0, 0.0));
     // An ExampleCommand will run in autonomous
+        return new SequentialCommandGroup(new RunCommand(() -> {
+			drivetrain.curvatureDrive(-0.4, 0.15);
+		}, drivetrain).withTimeout(0.7), new RunCommand(() -> {
+			drivetrain.curvatureDrive(-0.5, 0);
+		}, drivetrain).withTimeout(1), new RunCommand(() -> {
+			drivetrain.curvatureDrive(-0.4, -0.30);
+    		}, drivetrain).withTimeout(0.7), new RunCommand(() -> {
+			drivetrain.curvatureDrive(-0.5, 0);
+		}, drivetrain).withTimeout(1)).withTimeout(5);
+
 //     return new SequentialCommandGroup(new ParallelCommandGroup(new RunCommand(() -> {
 // 			shooter.shoot(-0.54);
 // 		}, shooter), new RunCommand(() -> {

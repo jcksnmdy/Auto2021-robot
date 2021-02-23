@@ -47,10 +47,8 @@ public class DriveLimeLight extends CommandBase {
   @Override
   public void execute() {
     double tx = m_limelight.getEntry("tx").getDouble(0);
-    double ty = m_limelight.getEntry("ty").getDouble(0);
 
     double aimAdjust = tx/3 * Constants.Limelight.kPAngle;
-    double driveAdjust = tx/3 * Constants.Limelight.kPDistance;
 		// Still needs to get target area
 		m_rightCommand = aimAdjust*-1; 
 		m_leftCommand =  aimAdjust*-1;

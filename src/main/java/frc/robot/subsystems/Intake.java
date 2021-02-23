@@ -15,7 +15,7 @@ import frc.robot.RobotContainer;
 
 public class Intake extends SubsystemBase {
   private Spark m_intake;
-  private boolean limitSwitchedPressed = false;
+  private boolean m_limitSwitchedPressed = false;
   /*
    * Creates a new Intake.
    */

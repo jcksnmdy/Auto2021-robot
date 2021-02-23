@@ -4,7 +4,7 @@ import frc.lib.utils.PunkSparkMax;
 import frc.robot.Constants;
 // import frc.lib.utils.PunkPIDController;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -43,7 +43,7 @@ public class ComplexDrivetrain extends SubsystemBase {
 
 	private CANEncoder m_leftEncoder, m_rightEncoder;
 
-	private PigeonIMU m_gyro;
+	private AHRS m_gyro;
 
 	private double[] heading;
 
@@ -62,7 +62,7 @@ public class ComplexDrivetrain extends SubsystemBase {
 		m_left = new SpeedControllerGroup(m_leftFront, m_leftBack);
 		m_right = new SpeedControllerGroup(m_rightFront, m_rightBack);
 		m_right.setInverted(true);
-		m_gyro = new PigeonIMU(0);
+		m_gyro = new AHRS();
 		heading = new double[3];
 
 		m_drive = new DifferentialDrive(m_left, m_right);
@@ -101,7 +101,6 @@ public class ComplexDrivetrain extends SubsystemBase {
 		m_rightPID.setIZone(0);
 		m_rightPID.setFF(0);
 		m_rightPID.setOutputRange(-1, 1);
-		m_gyro.configFactoryDefault();
 
 		SmartDashboard.putData("Drivetrain - Left PID", m_leftPIDController);
 		SmartDashboard.putData("Drivetrain - Right PID", m_rightPIDController);
@@ -114,7 +113,7 @@ public class ComplexDrivetrain extends SubsystemBase {
 	 * @return the robot's heading in degrees, from -180 to 180
 	 */
 	public double getHeading() {
-		return m_gyro.getAbsoluteCompassHeading();
+		return m_gyro.getCompassHeading();
 	}
 
 	/**
@@ -124,8 +123,10 @@ public class ComplexDrivetrain extends SubsystemBase {
 	 * @param rSpeed Right Speed of Drivetrain
 	 */
 	public void tankDrive(double lSpeed, double rSpeed) {
-		lSpeed = (Constants.Drivetrain.kTankInputFactor * lSpeed)/13;
-		rSpeed = (Constants.Drivetrain.kTankInputFactor * rSpeed)/13;
+		lSpeed = (Constants.Drivetrain.kTankInputFactor * lSpeed)/20;
+		rSpeed = (Constants.Drivetrain.kTankInputFactor * rSpeed)/20;
+		SmartDashboard.putNumber("lSpeed", lSpeed);
+		SmartDashboard.putNumber("rSpeed", rSpeed);
 		m_leftFront.set(lSpeed);
 		m_rightFront.set(rSpeed);
 		double speed = 0;
@@ -274,13 +275,13 @@ public class ComplexDrivetrain extends SubsystemBase {
 	}
 
 	/**
-	 * Retrieves the z-axis rotation from the PigeonIMU.
+	 * Retrieves the z-axis rotation from the NAVX.
 	 * 
 	 * @return Current rotation around z-axis (yaw).
 	 */
 
 	public Rotation2d getAngle() {
-		m_gyro.getYawPitchRoll(heading);
+		m_gyro.getYaw();
 		return Rotation2d.fromDegrees(heading[0]);
 	}
 	/**

@@ -55,7 +55,7 @@ public final class Constants {
 		public static final int kmRightFront = 1;
 		public static final int kmRightBack = 3;
 
-		public static final double kTrackWidth = 0.645668;
+		public static final double kTrackWidth = 0.61;
 		public static final double kTankInputFactor = 1;
 		public static final double kDistancePerPulse = 1.86e-5;
 		public static final DifferentialDriveKinematics mkinematics = new DifferentialDriveKinematics(Constants.Drivetrain.kTrackWidth);
@@ -80,8 +80,8 @@ public final class Constants {
 	
 
 	public static final class AutoConstants {
-		public static final double kMaxSpeedMetersPerSecond = 3;
-		public static final double kMaxAccelerationMetersPerSecondSquared = 1;
+		public static final double kMaxSpeedMetersPerSecond = 1;
+		public static final double kMaxAccelerationMetersPerSecondSquared = 0.2;
 	    
 		// Reasonable baseline values for a RAMSETE follower in units of meters and seconds
 		public static final double kRamseteB = 2;
