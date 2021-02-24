@@ -322,7 +322,7 @@ public class RobotContainer {
 				autoCommands.turnWithRadius(1, 90);
 			}, drivetrain).withTimeout(4), new RunCommand(() -> {
 				autoCommands.driveToDistance(12);
-			}
+			}, drivetrain).withTimeout(4));
 		}
 
 //     return new SequentialCommandGroup(new ParallelCommandGroup(new RunCommand(() -> {
