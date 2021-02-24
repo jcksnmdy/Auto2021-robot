@@ -305,7 +305,7 @@ public class RobotContainer {
 			}, drivetrain).withTimeout(4), new RunCommand(() -> {
 				System.out.println("Straight");
 				autoCommands.driveToDistance(10);
-			}
+			}, drivetrain).withTimeout(4));
 	} else {
 		return new SequentialCommandGroup(new RunCommand(() -> {
 				System.out.println("Turn Left");
