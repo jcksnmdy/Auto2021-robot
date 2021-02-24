@@ -44,6 +44,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+
+import java.lang.invoke.VarHandle;
 import java.util.List;
 
 
@@ -75,6 +77,8 @@ public class RobotContainer {
 	// drivetrain);
 	public static DriveLimeLight driveLimelight = new DriveLimeLight(drivetrain);
 	public static AutoCommands autoCommands = new AutoCommands(drivetrain);
+
+	public static double feetFromEncoder = 0.0;
 
   private RunCommand m_curvatureDrive = new RunCommand(() -> {
 		if (slowTurn.get()) {
@@ -243,15 +247,83 @@ public class RobotContainer {
 //       // Run path following command, then stop at the end.
 //       return ramseteCommand.andThen(() -> drivetrain.curvatureDrive(0.0, 0.0));
     // An ExampleCommand will run in autonomous
-        return new SequentialCommandGroup(new RunCommand(() -> {
-			drivetrain.curvatureDrive(-0.4, 0.15);
-		}, drivetrain).withTimeout(0.7), new RunCommand(() -> {
-			drivetrain.curvatureDrive(-0.5, 0);
-		}, drivetrain).withTimeout(1), new RunCommand(() -> {
-			drivetrain.curvatureDrive(-0.4, -0.30);
-    		}, drivetrain).withTimeout(0.7), new RunCommand(() -> {
-			drivetrain.curvatureDrive(-0.5, 0);
-		}, drivetrain).withTimeout(1)).withTimeout(5);
+	// boolean var = true;
+	// if (var == true) {
+	// 	return new SequentialCommandGroup(new RunCommand(() -> {
+	// 		System.out.println("Straight");
+	// 			autoCommands.driveToDistance(6.34);
+	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
+	// 			System.out.println("Turn Right");
+	// 			autoCommands.turnWithRadius(1, 45);
+	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
+	// 			autoCommands.driveToDistance(5.6);
+	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
+	// 			autoCommands.turnWithRadius(1, -90);
+	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
+	// 			autoCommands.driveToDistance(7.9);
+	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
+	// 			autoCommands.turnWithRadius(1, 45);
+	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
+	// 			autoCommands.driveToDistance(13.83);
+	// 		}, drivetrain).withTimeout(4));
+	// } else {
+	// 	return new SequentialCommandGroup(new RunCommand(() -> {
+	// 		System.out.println("Straight");
+	// 			autoCommands.driveToDistance(8.84);
+	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
+	// 			autoCommands.turnWithRadius(1, -73);
+	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
+	// 			autoCommands.driveToDistance(7.9);
+	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
+	// 			autoCommands.turnWithRadius(1, 90);
+	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
+	// 			autoCommands.driveToDistance(11);
+	// 		}, drivetrain).withTimeout(4));
+	// }	
+
+	boolean var2 = true;
+
+	if (var2 == true) {
+		return new SequentialCommandGroup(new RunCommand(() -> {
+				System.out.println("Turn Left");
+				autoCommands.turnWithRadius(1, -45);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				System.out.println("Straight");
+				autoCommands.driveToDistance(7);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.turnWithRadius(1, 90);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				System.out.println("Straight");
+				autoCommands.driveToDistance(7);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.turnWithRadius(1, -90);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				System.out.println("Straight");
+				autoCommands.driveToDistance(7);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.turnWithRadius(1, 45);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				System.out.println("Straight");
+				autoCommands.driveToDistance(10);
+			}
+	} else {
+		return new SequentialCommandGroup(new RunCommand(() -> {
+				System.out.println("Turn Left");
+				autoCommands.turnWithRadius(1, -30);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				System.out.println("Straight");
+				autoCommands.driveToDistance(14);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.turnWithRadius(1, -10);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				System.out.println("Straight");
+				autoCommands.driveToDistance(7);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.turnWithRadius(1, 90);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.driveToDistance(12);
+			}
+		}
 
 //     return new SequentialCommandGroup(new ParallelCommandGroup(new RunCommand(() -> {
 // 			shooter.shoot(-0.54);

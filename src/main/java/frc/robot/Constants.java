@@ -128,7 +128,8 @@ public final class Constants {
 	public static final int kClimberMotor = 1;
 	public static final int kWenchMotor = 2;
 	//Used in AutoCommands for turnWithRadius
-	public static final double kRobotWidth = 24.0; //In inches
+	public static final double kRobotWidth = 2.0; //In Feet
+	
 
 	
 }

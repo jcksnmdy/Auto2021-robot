@@ -14,7 +14,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.robot.Constants;
 
-
 /** An example command that uses an example subsystem. */
 public class AutoCommands extends CommandBase {
         @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
@@ -46,26 +45,37 @@ public class AutoCommands extends CommandBase {
   public void execute() {
     
   }
+  public void driveToDistance(double dist) {
+    m_drive.setRightZero();
+    m_drive.setLeftZero();
+
+    while (m_drive.getLeftDistance() < dist) {
+      m_drive.tankDrive(-0.3, -0.33);
+    }
+    stopMoving();
+  }
   // radius in in icnhes
   public void turnWithRadius(double radius, double degrees) {
           double radiansToTurn = 2*Math.PI*(degrees/360); // Converting to radians
           double rightSideArcLen = radiansToTurn*radius; // Find arc length
           double leftSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth);
         
-          double rightSpeed = rightSideArcLen/200; // speed
-          double leftSpeed = leftSideArcLen/200;
+          double rightSpeed = rightSideArcLen/2; // speed
+          double leftSpeed = leftSideArcLen/2;
 
           SmartDashboard.putNumber("Right Speed to Turn", rightSpeed); // Display
           SmartDashboard.putNumber("Left Speed to Turn", leftSpeed);
-          SmartDashboard.putNumber("Distance", m_drive.getDistance());
-
-        //   while (m_drive.getDistance() < radiansToTurn){ //distance is encoder value converted to radians
-        //     m_drive.setRight(rightSpeed); // go right speed
-        //     m_drive.setLeft(leftSpeed); // go left speed
-        //   }
           
-        //   m_drive.setRight(0);
-        //   m_drive.setLeft(0);
+          m_drive.setLeftZero();
+          m_drive.setRightZero();
+          while (m_drive.getRightDistance() < rightSideArcLen){ //distance is encoder value converted to radians
+            SmartDashboard.putNumber("Distance", m_drive.getDistance());
+            //Adjust for skew: Multiplying by 1.1 
+             m_drive.tankDrive(leftSpeed, rightSpeed*1.1);
+           }
+          
+           m_drive.setRight(0);
+           m_drive.setLeft(0);
   }
 
   public void stopMoving() {

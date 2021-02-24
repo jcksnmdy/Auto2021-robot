@@ -70,7 +70,7 @@ public class ComplexDrivetrain extends SubsystemBase {
 		m_odometry = new DifferentialDriveOdometry(getAngle());
 
 		m_leftPIDController = new PIDController(1, 0.0015, 0);
-		m_rightPIDController = new PIDController(0.95, 0.001, 0);
+		m_rightPIDController = new PIDController(1.1, 0.0015, 0);
 		m_leftPIDController.setTolerance(0.01, 0.005);
 		m_rightPIDController.setTolerance(0.01, 0.005);
 
@@ -95,9 +95,9 @@ public class ComplexDrivetrain extends SubsystemBase {
 		m_leftPID.setIZone(0);
 		m_leftPID.setFF(0);
 		m_leftPID.setOutputRange(-1, 1);
-		m_rightPID.setP(0.1);
-		m_rightPID.setI(1e-4);
-		m_rightPID.setD(1);
+		m_rightPID.setP(0.2);
+		m_rightPID.setI(0);
+		m_rightPID.setD(0);
 		m_rightPID.setIZone(0);
 		m_rightPID.setFF(0);
 		m_rightPID.setOutputRange(-1, 1);
@@ -123,8 +123,8 @@ public class ComplexDrivetrain extends SubsystemBase {
 	 * @param rSpeed Right Speed of Drivetrain
 	 */
 	public void tankDrive(double lSpeed, double rSpeed) {
-		lSpeed = (Constants.Drivetrain.kTankInputFactor * lSpeed)/20;
-		rSpeed = (Constants.Drivetrain.kTankInputFactor * rSpeed)/20;
+		lSpeed = (Constants.Drivetrain.kTankInputFactor * lSpeed);
+		rSpeed = (Constants.Drivetrain.kTankInputFactor * rSpeed);
 		SmartDashboard.putNumber("lSpeed", lSpeed);
 		SmartDashboard.putNumber("rSpeed", rSpeed);
 		m_leftFront.set(lSpeed);
@@ -316,6 +316,13 @@ public class ComplexDrivetrain extends SubsystemBase {
 	 */
 	public double getRightDistance() {
 		return (m_rightEncoder.getPosition() * (Math.PI * 6)) / 12;
+	}
+
+	public void setRightZero() {
+		m_rightEncoder.setPosition(0.0);
+	}
+	public void setLeftZero() {
+		m_rightEncoder.setPosition(0.0);
 	}
 	/**
 	 * Returns the currently-estimated pose of the robot.
