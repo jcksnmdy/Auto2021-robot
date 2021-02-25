@@ -247,39 +247,49 @@ public class RobotContainer {
 //       // Run path following command, then stop at the end.
 //       return ramseteCommand.andThen(() -> drivetrain.curvatureDrive(0.0, 0.0));
     // An ExampleCommand will run in autonomous
-	// boolean var = true;
-	// if (var == true) {
-	// 	return new SequentialCommandGroup(new RunCommand(() -> {
-	// 		System.out.println("Straight");
-	// 			autoCommands.driveToDistance(6.34);
-	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 			System.out.println("Turn Right");
-	// 			autoCommands.turnWithRadius(1, 45);
-	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 			autoCommands.driveToDistance(5.6);
-	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 			autoCommands.turnWithRadius(1, -90);
-	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 			autoCommands.driveToDistance(7.9);
-	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 			autoCommands.turnWithRadius(1, 45);
-	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 			autoCommands.driveToDistance(13.83);
-	// 		}, drivetrain).withTimeout(4));
-	// } else {
-	// 	return new SequentialCommandGroup(new RunCommand(() -> {
-	// 		System.out.println("Straight");
-	// 			autoCommands.driveToDistance(8.84);
-	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 			autoCommands.turnWithRadius(1, -73);
-	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 			autoCommands.driveToDistance(7.9);
-	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 			autoCommands.turnWithRadius(1, 90);
-	// 		}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 			autoCommands.driveToDistance(11);
-	// 		}, drivetrain).withTimeout(4));
-	// }	
+    return new RunCommand(() -> {
+		System.out.println("Straight");
+		autoCommands.driveToDistance(6.34);
+		// System.out.println("Turn Right");
+		// autoCommands.turnWithRadius(1, 45);
+	}, drivetrain).withTimeout(5);
+    /*
+	boolean var = true;
+	if (var == true) {
+		return new SequentialCommandGroup(new RunCommand(() -> {
+			System.out.println("Straight");
+				autoCommands.driveToDistance(6.34);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				System.out.println("Turn Right");
+				autoCommands.turnWithRadius(1, 45);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.driveToDistance(5.6);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.turnWithRadius(1, -90);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.driveToDistance(7.9);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.turnWithRadius(1, 45);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.driveToDistance(13.83);
+			}, drivetrain).withTimeout(4));
+	} else {
+		return new SequentialCommandGroup(new RunCommand(() -> {
+			System.out.println("Straight");
+				autoCommands.driveToDistance(8.84);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.turnWithRadius(1, -73);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.driveToDistance(7.9);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.turnWithRadius(1, 90);
+			}, drivetrain).withTimeout(4), new RunCommand(() -> {
+				autoCommands.driveToDistance(11);
+			}, drivetrain).withTimeout(4));
+	}	
+*/
+
+/*
 
 	boolean var2 = true;
 
@@ -324,6 +334,8 @@ public class RobotContainer {
 				autoCommands.driveToDistance(12);
 			}, drivetrain).withTimeout(4));
 		}
+
+*/
 
 //     return new SequentialCommandGroup(new ParallelCommandGroup(new RunCommand(() -> {
 // 			shooter.shoot(-0.54);

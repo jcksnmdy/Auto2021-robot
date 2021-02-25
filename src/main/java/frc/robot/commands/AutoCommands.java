@@ -49,29 +49,40 @@ public class AutoCommands extends CommandBase {
     m_drive.setRightZero();
     m_drive.setLeftZero();
 
-    while (m_drive.getLeftDistance() < dist) {
+    while ((Math.abs(m_drive.getLeftDistance())+Math.abs(m_drive.getRightDistance()))/2 < dist) {
       m_drive.tankDrive(-0.3, -0.33);
+      SmartDashboard.putNumber("Right distance DTD", m_drive.getRightDistance()); // Display
+      SmartDashboard.putNumber("Left distance DTD", m_drive.getLeftDistance()); // Display
+      SmartDashboard.putNumber("Adjusted Total Distance To Go", dist-((Math.abs(m_drive.getLeftDistance())+Math.abs(m_drive.getRightDistance()))/2)); // Display
+
     }
     stopMoving();
   }
   // radius in in icnhes
   public void turnWithRadius(double radius, double degrees) {
-          double radiansToTurn = 2*Math.PI*(degrees/360); // Converting to radians
+          double radiansToTurn = Math.PI*(degrees/180); // Converting to radians
           double rightSideArcLen = radiansToTurn*radius; // Find arc length
-          double leftSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth);
+          //double leftSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth);
         
-          double rightSpeed = rightSideArcLen/2; // speed
-          double leftSpeed = leftSideArcLen/2;
+          double rightSpeed = rightSideArcLen/7; // speed
+          //double leftSpeed = leftSideArcLen/7;
 
-          SmartDashboard.putNumber("Right Speed to Turn", rightSpeed); // Display
-          SmartDashboard.putNumber("Left Speed to Turn", leftSpeed);
-          
           m_drive.setLeftZero();
           m_drive.setRightZero();
-          while (m_drive.getRightDistance() < rightSideArcLen){ //distance is encoder value converted to radians
-            SmartDashboard.putNumber("Distance", m_drive.getDistance());
-            //Adjust for skew: Multiplying by 1.1 
-             m_drive.tankDrive(leftSpeed, rightSpeed*1.1);
+          SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
+          SmartDashboard.putNumber("Right Speed to Turn", rightSpeed); // Display
+          // SmartDashboard.putNumber("Left Speed to Turn", leftSpeed);
+          SmartDashboard.putNumber("Right Arc Length", rightSideArcLen); // Display
+          // SmartDashboard.putNumber("Left Arc Length", leftSideArcLen);
+          
+
+          while (Math.abs(m_drive.getRightDistance()) < Math.abs(rightSideArcLen)) { //distance is encoder value converted to radians
+            SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
+            SmartDashboard.putNumber("Distance to go", Math.abs(rightSideArcLen)-Math.abs(m_drive.getRightDistance()));
+            // hold on: Adjust for skew: Multiplying by 1.01
+
+             m_drive.tankDrive(0, rightSpeed); // Test just work with one side
+
            }
           
            m_drive.setRight(0);
