@@ -41,7 +41,7 @@ public class ComplexDrivetrain extends SubsystemBase {
 
 	// private DoubleSolenoid m_gearShift;
 
-	private CANEncoder m_leftEncoder, m_rightEncoder;
+	public CANEncoder m_leftEncoder, m_rightEncoder;
 
 	private AHRS m_gyro;
 
@@ -319,10 +319,10 @@ public class ComplexDrivetrain extends SubsystemBase {
 	}
 
 	public void setRightZero() {
-		m_rightEncoder.setPosition(0.0);
+		m_rightEncoder.setPosition(0);
 	}
 	public void setLeftZero() {
-		m_rightEncoder.setPosition(0.0);
+		m_rightEncoder.setPosition(0);
 	}
 	/**
 	 * Returns the currently-estimated pose of the robot.

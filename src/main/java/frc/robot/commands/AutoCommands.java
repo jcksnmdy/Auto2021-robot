@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import java.lang.Math;
+import java.lang.annotation.Target;
 
 import frc.robot.subsystems.ComplexDrivetrain;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -50,44 +51,54 @@ public class AutoCommands extends CommandBase {
     m_drive.setLeftZero();
 
     while ((Math.abs(m_drive.getLeftDistance())+Math.abs(m_drive.getRightDistance()))/2 < dist) {
-      m_drive.tankDrive(-0.3, -0.33);
-      SmartDashboard.putNumber("Right distance DTD", m_drive.getRightDistance()); // Display
-      SmartDashboard.putNumber("Left distance DTD", m_drive.getLeftDistance()); // Display
+      m_drive.tankDrive(-0.5, -0.514);
+      SmartDashboard.putNumber("Average Distance DTD", m_drive.getLeftDistance()+m_drive.getRightDistance()); // Display
       SmartDashboard.putNumber("Adjusted Total Distance To Go", dist-((Math.abs(m_drive.getLeftDistance())+Math.abs(m_drive.getRightDistance()))/2)); // Display
 
     }
+    m_drive.setRightZero();
+    m_drive.setLeftZero();
     stopMoving();
   }
   // radius in in icnhes
   public void turnWithRadius(double radius, double degrees) {
           double radiansToTurn = Math.PI*(degrees/180); // Converting to radians
           double rightSideArcLen = radiansToTurn*radius; // Find arc length
-          //double leftSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth);
-        
-          double rightSpeed = rightSideArcLen/7; // speed
-          //double leftSpeed = leftSideArcLen/7;
+          double leftSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth);
 
           m_drive.setLeftZero();
           m_drive.setRightZero();
-          SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
-          SmartDashboard.putNumber("Right Speed to Turn", rightSpeed); // Display
-          // SmartDashboard.putNumber("Left Speed to Turn", leftSpeed);
+        
+          double rightTarget = m_drive.getRightDistance()+rightSideArcLen;
+          double leftTarget = m_drive.getLeftDistance()+leftSideArcLen;
+
           SmartDashboard.putNumber("Right Arc Length", rightSideArcLen); // Display
-          // SmartDashboard.putNumber("Left Arc Length", leftSideArcLen);
-          
+          SmartDashboard.putNumber("Left Arc Length", leftSideArcLen);
 
-          while (Math.abs(m_drive.getRightDistance()) < Math.abs(rightSideArcLen)) { //distance is encoder value converted to radians
-            SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
-            SmartDashboard.putNumber("Distance to go", Math.abs(rightSideArcLen)-Math.abs(m_drive.getRightDistance()));
-            // hold on: Adjust for skew: Multiplying by 1.01
-
-             m_drive.tankDrive(0, rightSpeed); // Test just work with one side
-
-           }
-          
+          if (rightSideArcLen>0 && radius==1) {
+            while (m_drive.getRightDistance()<rightTarget) { //distance is encoder value converted to radians
+              SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
+              SmartDashboard.putNumber("Right Target", rightTarget);
+              m_drive.tankDrive(-0.4, 0.4);
+            }
+          } else if (leftSideArcLen>0 && radius==1) { 
+            while (m_drive.getLeftDistance()<leftTarget) { //distance is encoder value converted to radians
+              SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
+              SmartDashboard.putNumber("Left Target", leftTarget);
+              m_drive.tankDrive(0.4, -0.4);
+            }
+          } else {
+            while (m_drive.getLeftDistance()<leftTarget) { //distance is encoder value converted to radians
+              SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
+              SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
+              SmartDashboard.putNumber("Right Target", rightTarget);
+              SmartDashboard.putNumber("Left Target", leftTarget);
+              m_drive.tankDrive(leftSideArcLen/4, rightSideArcLen/4);
+            }
+          }
            m_drive.setRight(0);
            m_drive.setLeft(0);
-  }
+          }
 
   public void stopMoving() {
 		m_drive.setLeft(0);
