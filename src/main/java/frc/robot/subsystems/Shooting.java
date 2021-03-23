@@ -35,14 +35,14 @@ public class Shooting extends SubsystemBase {
 
   public void shootLimeLight() {
 	double ty = m_limelight.getEntry("ty").getDouble(0);
-	if (ty > 10) {
-		newSpeed = -0.75;
-	} else if (ty > 5) {
-		newSpeed = -0.68;
-	} else if (ty > 1) {
+	if (ty < -15) {
+		newSpeed = -0.73;
+	} else if (ty < -10) {
+		newSpeed = -0.65;
+	} else if (ty < -6){
 		newSpeed = -0.60;
 	} else {
-		newSpeed = -0.56;
+		newSpeed = -0.73;
 	}
 	SmartDashboard.putNumber("shootSpeed", newSpeed);
 

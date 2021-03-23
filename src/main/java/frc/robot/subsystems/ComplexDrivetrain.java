@@ -319,10 +319,10 @@ public class ComplexDrivetrain extends SubsystemBase {
 	}
 
 	public void setRightZero() {
-		m_rightEncoder.setPosition(0);
+		m_rightEncoder.setPosition(0.00);
 	}
 	public void setLeftZero() {
-		m_rightEncoder.setPosition(0);
+		m_rightEncoder.setPosition(0.00);
 	}
 	/**
 	 * Returns the currently-estimated pose of the robot.

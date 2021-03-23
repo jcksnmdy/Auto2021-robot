@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -73,6 +74,10 @@ public class RobotContainer {
 	public static JoystickButton rightTrigger = new JoystickButton(joystick, 8);
 	public static JoystickButton xbutton = new JoystickButton(joystick, 2);
 	public static JoystickButton slowTurn = new JoystickButton(joystick, 12);
+	public static JoystickButton close = new JoystickButton(joystick, 5);
+	public static JoystickButton middle = new JoystickButton(joystick, 6);
+	public static JoystickButton far = new JoystickButton(joystick, 14);
+
 	// public static DriveToDistance driveToDistance = new DriveToDistance(10,
 	// drivetrain);
 	public static DriveLimeLight driveLimelight = new DriveLimeLight(drivetrain);
@@ -106,7 +111,13 @@ public class RobotContainer {
 		if (leftTrigger.get()) {
 			shooter.shootLimeLight();
 		} else if (xbutton.get()) {
-			shooter.shoot(-0.75);
+			shooter.shoot(-0.56);
+		}  else if (close.get()) {
+			shooter.shoot(-0.60);
+		}  else if (middle.get()) {
+			shooter.shoot(-0.65);
+		}  else if (far.get()) {
+			shooter.shoot(-0.73);
 		} else {
 			shooter.stopShooting();
 		}
@@ -150,14 +161,6 @@ public class RobotContainer {
 			}
 		}, drivetrain));
 
-		new JoystickButton(joystick, 12).whenPressed(new RunCommand(() -> {                         // Radius, degrees
-			autoCommands.turnWithRadius(65, 170);
-		}, drivetrain));
-
-		new JoystickButton(joystick, 12).whenReleased(new RunCommand(() -> {    
-			autoCommands.stopMoving();
-		}, drivetrain));
-		
 		// Togle lights - BUTTON->
 		new JoystickButton(joystick, 13).whenPressed(new InstantCommand(() -> {
 			
@@ -187,6 +190,110 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    //An ExampleCommand will run in autonomous
+    	// return new SequentialCommandGroup(new InstantCommand(() -> {
+	// 		autoCommands.zeroGyro();
+	// 	}, drivetrain).withTimeout(2), new RunCommand(() -> {
+	// 		autoCommands.driveToDistance(8, 0.2);
+	// 		//autoCommands.turnWithGyro(45, 0.2);
+	// 	}, drivetrain).withTimeout(20));
+    	
+	int galacticSearch = 2;
+	boolean red = false;
+	if (galacticSearch == 1) {
+		if (red) { 
+			// may need to make parralele command group
+			// hopefully we can remove the timeouts
+			// Test new turn, maybe it will be proportional
+			return new SequentialCommandGroup(new InstantCommand(() -> {
+					intake.runIntake();
+					autoCommands.driveToDistance(5, 0.3); //feet, speed
+					intake.stopIntake();
+				}, drivetrain).withTimeout(3), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, 37, 0.2); //dont change, degree, speed
+				}, drivetrain), new RunCommand(() -> {
+					intake.runIntake();
+					autoCommands.driveToDistance(6, 0.3);
+					intake.stopIntake();
+				}, drivetrain).withTimeout(5), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, -80, 0.2);
+				}, drivetrain), new RunCommand(() -> {
+					intake.runIntake();
+					autoCommands.driveToDistance(8.8, 0.3);
+					intake.stopIntake();
+				}, drivetrain).withTimeout(6), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, 65, 0.35);
+				}, drivetrain), new RunCommand(() -> {
+					intake.stopIntake();
+					autoCommands.driveToDistance(18, 0.5);
+				}, drivetrain).withTimeout(1.5)).withTimeout(16);
+		} else {
+			System.out.println("Blue 1");
+			return new SequentialCommandGroup(new RunCommand(() -> {
+					autoCommands.driveToDistance(14, 0.3);
+				}, drivetrain).withTimeout(5), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, -60, 0.2);
+				}, drivetrain).withTimeout(2), new RunCommand(() -> {
+					autoCommands.driveToDistance(11, 0.3);
+				}, drivetrain).withTimeout(2), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, 100, 0.2);
+				}, drivetrain).withTimeout(2), new RunCommand(() -> {
+					autoCommands.driveToDistance(18, 0.3);
+				}, drivetrain).withTimeout(2));
+		}
+	} else if (galacticSearch == 2) {	
+		if (red) {
+			return new SequentialCommandGroup(new RunCommand(() -> {
+					autoCommands.driveToDistance(2, 0.2);
+				}, drivetrain).withTimeout(2), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, -23, 0.2);
+				}, drivetrain).withTimeout(2), new RunCommand(() -> {
+					autoCommands.driveToDistance(7, 0.3);
+				}, drivetrain).withTimeout(2), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, 100, 0.2);
+				}, drivetrain).withTimeout(2), new RunCommand(() -> {
+					autoCommands.driveToDistance(13, 0.3);
+				}, drivetrain).withTimeout(3), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, -90, 0.2);
+				}, drivetrain).withTimeout(2), new RunCommand(() -> {
+					autoCommands.driveToDistance(11, 0.3);
+				}, drivetrain).withTimeout(3), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, 45, 0.2);
+				}, drivetrain), new RunCommand(() -> {
+					drivetrain.curvatureDrive(-0.4, 0);
+				}, drivetrain).withTimeout(2));
+		} else {
+			return new SequentialCommandGroup(new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, 10, 0.2);
+				}, drivetrain).withTimeout(1), new InstantCommand(() -> {
+					autoCommands.driveToDistance(14, 0.3);
+				}, drivetrain), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, -50, 0.2);
+				}, drivetrain).withTimeout(4), new InstantCommand(() -> {
+					Timer.delay(0.1);
+					autoCommands.driveToDistance(14, 0.3);
+				}, drivetrain), new InstantCommand(() -> {
+					autoCommands.turnWithRadius(1, 90, 0.2);
+				}, drivetrain).withTimeout(1), new InstantCommand(() -> {
+					autoCommands.driveToDistance(18, 0.3);
+				}, drivetrain));
+			}
+		} else if (galacticSearch == 3) {
+			//Implement AutoNav Barrel Run chalenge
+		} else if (galacticSearch == 4) {
+			//Implement AutoNav Slalom Path chalenge
+		} else if (galacticSearch == 5) {
+			//Implement AutoNav Bounce Path chalenge
+		}
+	}
+}
+//     return new SequentialCommandGroup(new ParallelCommandGroup(new RunCommand(() -> {
+// 			shooter.shoot(-0.54);
+// 		}, shooter), new RunCommand(() -> {
+// 			index.runIndexer();
+// 		}, index)).withTimeout(10), new RunCommand(() -> {
+// 			drivetrain.curvatureDrive(-0.25, 0);
+//     }, drivetrain).withTimeout(1)).withTimeout(15);
 // 	  // Create a voltage constraint to ensure we don't accelerate too fast
 // 	  var autoVoltageConstraint =
 // 	  new DifferentialDriveVoltageConstraint(
@@ -247,120 +354,3 @@ public class RobotContainer {
   
 //       // Run path following command, then stop at the end.
 //       return ramseteCommand.andThen(() -> drivetrain.curvatureDrive(0.0, 0.0));
-    //An ExampleCommand will run in autonomous
-//     return new InstantCommand(() -> {
-// 		// System.out.println("Straight");
-// 		// autoCommands.driveToDistance(6.34);
-// 		System.out.println("Turn Right");
-// 		autoCommands.turnWithRadius(1, 45);
-// 	}, drivetrain).withTimeout(5);
-    
-	// boolean var = true;
-	// if (var == true) {
-		
-		return new SequentialCommandGroup(new RunCommand(() -> {
-				ledMode.setDouble(3); // Force ON
-				index.runIndexer();
-				System.out.println("Straight");
-				autoCommands.driveToDistance(5);
-				index.stopIndexer();
-			}, drivetrain).withTimeout(2), new InstantCommand(() -> {
-				System.out.println("Turn Right");
-				ledMode.setDouble(1); // Force OFF
-		 		autoCommands.turnWithRadius(1, 30);
-			}, drivetrain).withTimeout(4), new RunCommand(() -> {
-				System.out.println("Straight again");
-				index.runIndexer();
-				ledMode.setDouble(3); // Force ON
-				autoCommands.driveToDistance(5.6);
-				index.stopIndexer();
-			}, drivetrain).withTimeout(4), new InstantCommand(() -> {
-				ledMode.setDouble(3); // Force ON
-				autoCommands.turnWithRadius(1, -90);
-			}, drivetrain).withTimeout(4), new RunCommand(() -> {
-				ledMode.setDouble(1); // Force OFF
-				index.runIndexer();
-				autoCommands.driveToDistance(7.9);
-				index.stopIndexer();
-			}, drivetrain).withTimeout(4), new InstantCommand(() -> {
-				ledMode.setDouble(3); // Force ON
-				autoCommands.turnWithRadius(1, 70);
-			}, drivetrain).withTimeout(4), new RunCommand(() -> {
-				ledMode.setDouble(1); // Force OFF
-				autoCommands.driveToDistance(15.83);
-			}, drivetrain).withTimeout(4));
-		 //}*/
-
-		 // else {
-	// 	// return new SequentialCommandGroup(new RunCommand(() -> {
-	// 	// 	System.out.println("Straight");
-	// 	// 		autoCommands.driveToDistance(8.84);
-	// 	// 	}, drivetrain).withTimeout(4), new InstantCommand(() -> {
-	// 	// 		autoCommands.turnWithRadius(1, -73);
-	// 	// 	}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 	// 		autoCommands.driveToDistance(7.9);
-	// 	// 	}, drivetrain).withTimeout(4), new InstantCommand(() -> {
-	// 	// 		autoCommands.turnWithRadius(1, 90);
-	// 	// 	}, drivetrain).withTimeout(4), new RunCommand(() -> {
-	// 	// 		autoCommands.driveToDistance(11);
-	// 	// 	}, drivetrain).withTimeout(4));
-	// }	
-
-
-/*
-
-	boolean var2 = true;
-
-	if (var2 == true) {
-		return new SequentialCommandGroup(new InstantCommand(() -> {
-				System.out.println("Turn Left");
-				autoCommands.turnWithRadius(1, -45);
-			}, drivetrain).withTimeout(4), new RunCommand(() -> {
-				System.out.println("Straight");
-				autoCommands.driveToDistance(7);
-			}, drivetrain).withTimeout(4), new InstantCommand(() -> {
-				autoCommands.turnWithRadius(1, 90);
-			}, drivetrain).withTimeout(4), new RunCommand(() -> {
-				System.out.println("Straight");
-				autoCommands.driveToDistance(7);
-			}, drivetrain).withTimeout(4), new InstantCommand(() -> {
-				autoCommands.turnWithRadius(1, -90);
-			}, drivetrain).withTimeout(4), new RunCommand(() -> {
-				System.out.println("Straight");
-				autoCommands.driveToDistance(7);
-			}, drivetrain).withTimeout(4), new InstantCommand(() -> {
-				autoCommands.turnWithRadius(1, 45);
-			}, drivetrain).withTimeout(4), new RunCommand(() -> {
-				System.out.println("Straight");
-				autoCommands.driveToDistance(10);
-			}, drivetrain).withTimeout(4));
-	} else {
-		return new SequentialCommandGroup(new InstantCommand(() -> {
-				System.out.println("Turn Left");
-				autoCommands.turnWithRadius(1, -30);
-			}, drivetrain).withTimeout(4), new RunCommand(() -> {
-				System.out.println("Straight");
-				autoCommands.driveToDistance(14);
-			}, drivetrain).withTimeout(4), new InstantCommand(() -> {
-				autoCommands.turnWithRadius(1, -10);
-			}, drivetrain).withTimeout(4), new RunCommand(() -> {
-				System.out.println("Straight");
-				autoCommands.driveToDistance(7);
-			}, drivetrain).withTimeout(4), new InstantCommand(() -> {
-				autoCommands.turnWithRadius(1, 90);
-			}, drivetrain).withTimeout(4), new RunCommand(() -> {
-				autoCommands.driveToDistance(12);
-			}, drivetrain).withTimeout(4));
-		}
-
-*/
-
-//     return new SequentialCommandGroup(new ParallelCommandGroup(new RunCommand(() -> {
-// 			shooter.shoot(-0.54);
-// 		}, shooter), new RunCommand(() -> {
-// 			index.runIndexer();
-// 		}, index)).withTimeout(10), new RunCommand(() -> {
-// 			drivetrain.curvatureDrive(-0.25, 0);
-//     }, drivetrain).withTimeout(1)).withTimeout(15);
-  }
-}

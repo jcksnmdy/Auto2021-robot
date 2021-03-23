@@ -14,6 +14,10 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Timer;
 
 /** An example command that uses an example subsystem. */
 public class AutoCommands extends CommandBase {
@@ -21,7 +25,6 @@ public class AutoCommands extends CommandBase {
         private final ComplexDrivetrain m_drive;
         public double m_rightCommand;
         public double m_leftCommand;
-
   /**
    * Creates a new ExampleCommand.
    *
@@ -46,28 +49,34 @@ public class AutoCommands extends CommandBase {
   public void execute() {
     
   }
-  public void driveToDistance(double dist) {
+  public void driveToDistance(double dist, double driveSpeed) {
     m_drive.setRightZero();
     m_drive.setLeftZero();
-
+    Timer.delay(0.2);
     while ((Math.abs(m_drive.getLeftDistance())+Math.abs(m_drive.getRightDistance()))/2 < dist) {
-      m_drive.tankDrive(-0.5, -0.514);
+      m_drive.tankDrive(driveSpeed*-1, driveSpeed*-1.03);
       SmartDashboard.putNumber("Average Distance DTD", m_drive.getLeftDistance()+m_drive.getRightDistance()); // Display
       SmartDashboard.putNumber("Adjusted Total Distance To Go", dist-((Math.abs(m_drive.getLeftDistance())+Math.abs(m_drive.getRightDistance()))/2)); // Display
 
     }
-    m_drive.setRightZero();
-    m_drive.setLeftZero();
     stopMoving();
   }
-  // radius in in icnhes
-  public void turnWithRadius(double radius, double degrees) {
+  // public void zeroGyro() {
+  //   ahrs.zeroYaw();
+  // }
+  //   public void turnWithGyro(double degrees, double turnSpeed) {
+  //   /* Display 6-axis Processed Angle Data                                      */
+  //   SmartDashboard.putBoolean(  "IMU_Connected",        ahrs.isConnected());
+  //   SmartDashboard.putBoolean(  "IMU_IsCalibrating",    ahrs.isCalibrating());
+  //   SmartDashboard.putNumber(   "IMU_Yaw",              ahrs.getYaw());
+  //   SmartDashboard.putNumber(   "IMU_Pitch",            ahrs.getPitch());
+  //   SmartDashboard.putNumber(   "IMU_Roll",             ahrs.getRoll());
+  // }
+  // radius in in feet
+  public void turnWithRadius(double radius, double degrees, double turnSpeed) {
           double radiansToTurn = Math.PI*(degrees/180); // Converting to radians
-          double rightSideArcLen = radiansToTurn*radius; // Find arc length
-          double leftSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth);
-
-          m_drive.setLeftZero();
-          m_drive.setRightZero();
+          double rightSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth); // Find arc length
+          double leftSideArcLen = radiansToTurn*radius;
         
           double rightTarget = m_drive.getRightDistance()+rightSideArcLen;
           double leftTarget = m_drive.getLeftDistance()+leftSideArcLen;
@@ -75,30 +84,49 @@ public class AutoCommands extends CommandBase {
           SmartDashboard.putNumber("Right Arc Length", rightSideArcLen); // Display
           SmartDashboard.putNumber("Left Arc Length", leftSideArcLen);
 
-          if (rightSideArcLen>0 && radius==1) {
-            while (m_drive.getRightDistance()<rightTarget) { //distance is encoder value converted to radians
+          if (radius==1 && leftSideArcLen<0) {
+            while (m_drive.getLeftDistance()>leftTarget) { //distance is encoder value converted to radians
               SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
-              SmartDashboard.putNumber("Right Target", rightTarget);
-              m_drive.tankDrive(-0.4, 0.4);
-            }
-          } else if (leftSideArcLen>0 && radius==1) { 
-            while (m_drive.getLeftDistance()<leftTarget) { //distance is encoder value converted to radians
               SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
+              SmartDashboard.putNumber("Right Target", rightTarget);
               SmartDashboard.putNumber("Left Target", leftTarget);
-              m_drive.tankDrive(0.4, -0.4);
+              m_drive.tankDrive(turnSpeed, turnSpeed*-1);
             }
+            stopMoving();
           } else {
             while (m_drive.getLeftDistance()<leftTarget) { //distance is encoder value converted to radians
               SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
               SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
               SmartDashboard.putNumber("Right Target", rightTarget);
               SmartDashboard.putNumber("Left Target", leftTarget);
-              m_drive.tankDrive(leftSideArcLen/4, rightSideArcLen/4);
+              m_drive.tankDrive(turnSpeed*-1, turnSpeed);
             }
-          }
-           m_drive.setRight(0);
-           m_drive.setLeft(0);
-          }
+            stopMoving();
+        }
+          
+      }
+
+      // radius in in feet
+  // public void turnWithRadius(double radius, double degrees, double turnSpeed) {
+  //   double radiansToTurn = Math.PI*(degrees/180); // Converting to radians
+  //   double rightSideArcLen = radiansToTurn*radius; // Find arc length
+  //   double leftSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth);
+
+  //   m_drive.setLeftZero();
+  //   m_drive.setRightZero();
+  
+  //   double rightTarget = m_drive.getRightDistance()+rightSideArcLen;
+  //   double leftTarget = m_drive.getLeftDistance()+leftSideArcLen;
+
+  //   SmartDashboard.putNumber("Right Arc Length", rightSideArcLen); // Display
+  //   SmartDashboard.putNumber("Left Arc Length", leftSideArcLen);
+
+  //   while (!(m_drive.getLeftDistance()>=leftTarget-0.05&&m_drive.getLeftDistance()<=leftTarget+0.05)) {
+  //     m_drive.tankDrive(leftTarget-m_drive.getLeftDistance(), rightTarget-m_drive.getRightDistance());
+  //   }
+
+  //   stopMoving();
+  // }
 
   public void stopMoving() {
 		m_drive.setLeft(0);
