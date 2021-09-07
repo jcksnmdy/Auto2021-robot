@@ -52,7 +52,7 @@ public class AutoCommands extends CommandBase {
   public void driveToDistance(double dist, double driveSpeed) {
     m_drive.setRightZero();
     m_drive.setLeftZero();
-    Timer.delay(0.2);
+    Timer.delay(0.4);
     while ((Math.abs(m_drive.getLeftDistance())+Math.abs(m_drive.getRightDistance()))/2 < dist) {
       m_drive.tankDrive(driveSpeed*-1, driveSpeed*-1.03);
       SmartDashboard.putNumber("Average Distance DTD", m_drive.getLeftDistance()+m_drive.getRightDistance()); // Display
@@ -73,38 +73,117 @@ public class AutoCommands extends CommandBase {
   //   SmartDashboard.putNumber(   "IMU_Roll",             ahrs.getRoll());
   // }
   // radius in in feet
+  public void turnWithRadiusG(double radius, double degrees, double turnSpeed) {
+    double radiansToTurn = Math.PI*(degrees/180); // Converting to radians
+    double rightSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth); // Find arc length
+    double leftSideArcLen = radiansToTurn*radius;
+  
+    double rightTarget = m_drive.getRightDistance()+rightSideArcLen;
+    double leftTarget = m_drive.getLeftDistance()+leftSideArcLen;
+
+    SmartDashboard.putNumber("Right Arc Length", rightSideArcLen); // Display
+    SmartDashboard.putNumber("Left Arc Length", leftSideArcLen);
+
+    if (radius==1 && leftSideArcLen<0) {
+      while (m_drive.getLeftDistance()>leftTarget) { //distance is encoder value converted to radians
+        SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
+        SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
+        SmartDashboard.putNumber("Right Target", rightTarget);
+        SmartDashboard.putNumber("Left Target", leftTarget);
+        m_drive.tankDrive(turnSpeed, turnSpeed*-1);
+      }
+      stopMoving();
+    } else {
+      while (m_drive.getLeftDistance()<leftTarget) { //distance is encoder value converted to radians
+        SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
+        SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
+        SmartDashboard.putNumber("Right Target", rightTarget);
+        SmartDashboard.putNumber("Left Target", leftTarget);
+        m_drive.tankDrive(turnSpeed*-1, turnSpeed);
+      }
+      stopMoving();
+  }
+  SmartDashboard.putNumber("Left Target", leftTarget);
+}
+
+public double turningForFace() {
+    return (SmartDashboard.getNumber("X", 0)/100);
+
+}
+
   public void turnWithRadius(double radius, double degrees, double turnSpeed) {
           double radiansToTurn = Math.PI*(degrees/180); // Converting to radians
-          double rightSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth); // Find arc length
-          double leftSideArcLen = radiansToTurn*radius;
+          double rightSideArcLen;
+          double leftSideArcLen;
+          if (radius == 1 || radius == -1) {
+            rightSideArcLen = radiansToTurn*(-1); // Find arc length
+            leftSideArcLen = radiansToTurn*radius;
+          } else {
+            rightSideArcLen = radiansToTurn*(radius - Constants.kRobotWidth); // Find arc length
+            leftSideArcLen = radiansToTurn*radius;
+          }
         
           double rightTarget = m_drive.getRightDistance()+rightSideArcLen;
           double leftTarget = m_drive.getLeftDistance()+leftSideArcLen;
-
+          Timer.delay(0.4);
           SmartDashboard.putNumber("Right Arc Length", rightSideArcLen); // Display
           SmartDashboard.putNumber("Left Arc Length", leftSideArcLen);
 
-          if (radius==1 && leftSideArcLen<0) {
-            while (m_drive.getLeftDistance()>leftTarget) { //distance is encoder value converted to radians
-              SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
-              SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
-              SmartDashboard.putNumber("Right Target", rightTarget);
-              SmartDashboard.putNumber("Left Target", leftTarget);
-              m_drive.tankDrive(turnSpeed, turnSpeed*-1);
+          // if (radius==1 && leftSideArcLen>0) {
+          //   while (m_drive.getLeftDistance()<leftTarget) { //distance is encoder value converted to radians
+          //     SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
+          //     SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
+          //     System.out.println("going to the left");
+          //     SmartDashboard.putNumber("Right Target", rightTarget);
+          //     SmartDashboard.putNumber("Left Target", leftTarget);
+          //     SmartDashboard.putNumber("Left arc", leftSideArcLen);
+          //     SmartDashboard.putNumber("Running", 1);
+          //     m_drive.tankDrive(turnSpeed, turnSpeed*-1);
+          //   }
+          //   stopMoving();
+          // } else if (radius==1 && leftSideArcLen<0) {
+          //   while (m_drive.getLeftDistance()>leftTarget) { //distance is encoder value converted to radians
+          //     SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
+          //     System.out.println("going to the right");
+          //     SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
+          //     SmartDashboard.putNumber("Right Target", rightTarget);
+          //     SmartDashboard.putNumber("Left Target", leftTarget);
+          //     SmartDashboard.putNumber("Running", 2);
+          //     m_drive.tankDrive(turnSpeed*-1, turnSpeed);
+          //   }
+          //   stopMoving();
+          // } else {
+            if (leftSideArcLen < 0) {
+              while (m_drive.getLeftDistance()>leftTarget) { //distance is encoder value converted to radians
+                SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
+                SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
+                SmartDashboard.putNumber("Right Target", rightTarget);
+                SmartDashboard.putNumber("Left Target", leftTarget);
+                SmartDashboard.putNumber("Running", 3);
+                if (radius<0){
+                  m_drive.tankDrive((Math.abs(leftSideArcLen)/-15)*turnSpeed, (Math.abs(rightSideArcLen)/-15)*turnSpeed);
+                } else {
+                  m_drive.tankDrive((Math.abs(leftSideArcLen)/-15)*turnSpeed, (Math.abs(rightSideArcLen)/-15)*turnSpeed);
+                }
+              }
+              stopMoving();
             }
-            stopMoving();
-          } else {
-            while (m_drive.getLeftDistance()<leftTarget) { //distance is encoder value converted to radians
-              SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
-              SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
-              SmartDashboard.putNumber("Right Target", rightTarget);
-              SmartDashboard.putNumber("Left Target", leftTarget);
-              m_drive.tankDrive(turnSpeed*-1, turnSpeed);
+            else {
+              while (m_drive.getLeftDistance()<leftTarget) { //distance is encoder value converted to radians
+                SmartDashboard.putNumber("Current Right Distance", m_drive.getRightDistance());
+                SmartDashboard.putNumber("Current Left Distance", m_drive.getLeftDistance());
+                SmartDashboard.putNumber("Right Target", rightTarget);
+                SmartDashboard.putNumber("Left Target", leftTarget);
+                SmartDashboard.putNumber("Running", 4);
+                if (radius<0){
+                  m_drive.tankDrive((Math.abs(leftSideArcLen)/-15)*turnSpeed, (Math.abs(rightSideArcLen)/-15)*turnSpeed);
+                } else {
+                  m_drive.tankDrive((Math.abs(leftSideArcLen)/-15)*turnSpeed, (Math.abs(rightSideArcLen)/-15)*turnSpeed);
+                }
+              }
             }
-            stopMoving();
-        }
-          
-      }
+          //} 
+    }
 
       // radius in in feet
   // public void turnWithRadius(double radius, double degrees, double turnSpeed) {
